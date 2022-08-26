@@ -1,0 +1,120 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.springframework.boot' version '2.6.7'
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+group 'org.example'
+version '1.0'
+
+dependencies {
+    //For logging
+    implementation "org.slf4j:slf4j-api:1.7.36"
+    runtimeOnly "ch.qos.logback:logback-classic:1.2.11"
+
+    implementation 'org.projectlombok:lombok:1.18.22'
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+
+    //Mock server
+    testImplementation 'org.mock-server:mockserver-netty:5.13.2'
+    testImplementation 'org.mock-server:mockserver-junit-jupiter:5.13.2'
+
+    //Test retrofit calls
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.0'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
+
+    //Lombok Plugin
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    //Lombok Plugin for test
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    //Git plugin
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.0.0.202111291000-r'
+
+    //Spring dependencies
+    implementation 'org.springframework.boot:spring-boot-starter:2.6.7'
+
+    //Email service handler
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.6.7'
+
+    //Http Client Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    //Serializer/Deserializer json format
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //Serializer/Deserializer csv format
+    implementation 'org.apache.commons:commons-csv:1.9.0'
+
+    //AWS SDK for Amazon Certificate Manager
+    implementation 'com.amazonaws:aws-java-sdk-acm:1.12.248'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations{
+    cucumberRuntime{
+        extendsFrom testImplementation
+    }
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+    testLogging { events "passed", "skipped", "failed", "standardOut", "standardError" }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("build/testReports/jacocoHtml")
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'html:build/testReports/test-report.html', '--plugin', 'pretty', '--glue', 'steps', 'src/test/resources']
+        }
+    }
+}
+
+tasks.named("bootJar") {
+    baseName = 'cma-app'
+    mainClass = 'com.bmw.mapad.cma.DemoApp'
+    manifest {
+        attributes 'Start-Class': 'com.bmw.mapad.cma.DemoApp'
+    }
+}
+
+tasks.named("bootRun") {
+    mainClass = 'com.bmw.mapad.cma.DemoApp'
+}
+
+
+
+
+
+
+
+
+
+
+

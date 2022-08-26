@@ -1,0 +1,6 @@
+.gradle
+.idea
+build
+tempRepos
+DDCDatabase.kdbx
+src/main/resources/application.properties

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+export PATH="$(dirname $0)/usr/bin:${PATH}"
+export LD_LIBRARY_PATH="$(dirname $0)/usr/lib:${LD_LIBRARY_PATH}"
+
+if [ "${1}" == "cli" ]; then
+    shift
+    exec keepassxc-cli "$@"
+elif [ "${1}" == "proxy" ]; then
+    shift
+    exec keepassxc-proxy "$@"
+elif [ -v CHROME_WRAPPER ] || [ -v MOZ_LAUNCHED_CHILD ]; then
+    exec keepassxc-proxy "$@"
+else
+    exec keepassxc "$@"
+fi
