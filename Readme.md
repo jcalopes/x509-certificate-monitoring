@@ -9,11 +9,6 @@ It supports certificates came from multiple sources such as Bitbucket or Amazon 
 
 To be able to use this project to monitor certificates you need to supply the right environment variables in order to make it work properly. Some of them are optional depending on the sources and platform you want to use. For further information you can check the link above and you can find out a pipeline build the project. 
 
-		Available Options	
-		
-
-
-
 
  | Env. Variables   |      Mandatory      | Default  | Meaning |
 |----------|:-------------:|------:|------:|
@@ -54,6 +49,8 @@ The following steps are just a guidance you could have a simpler approach to imp
 
 1. Create a new branch from from master.
 2. Create a new properties file (i.e example-project.properties) under resources/config with the variables aforementioned. All secret information should not be exposed along with other properties.  
-3. Update .Jenkinsfile in stage Run where should take place the credentials within environment scope. Consider create these credentials in Jenkins Credentials and reference them here.
-4. Still in .Jenkinsfile now you should update your configuration filename in first step of stage Run. For instance, if you created the file example-project.properties on the step 2 then the step should looks like this: sh 'docker build --build-arg CONFIG_NAME={example-project} -t cert-app:lts .'
+3. Update .Jenkinsfile in stage Run where should take place the credentials within environment scope. Consider create these credentials in Jenkins Credentials Manager and reference them here.
+4. Still in .Jenkinsfile now you should update your configuration filename in first step of stage Run. For instance, if you created the file example-project.properties on the step 2 then the step should looks like this:
+                
+		                    sh 'docker build --build-arg CONFIG_NAME={example-project} -t cert-app:lts .'
 5. Once you set the environment variables properties and mentioned the properties file you can't forget to mention your branch created in step 1 within the Pipeline Configuration to load properly your configurations.
